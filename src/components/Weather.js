@@ -1,8 +1,17 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { WeatherContext } from '../context/WeatherContext';
 
 const Weather = () => {
     const { weatherData, currentWeatherData } = useContext(WeatherContext);
+    const [currentTime, setCurrentTime] = useState(new Date());
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, []);
 
     if (!weatherData || !weatherData.list || !currentWeatherData) return <div>Veri bulunamadı.</div>;
 
@@ -17,11 +26,16 @@ const Weather = () => {
     // Maksimum sıcaklık değeri
     const maxTemp = Math.max(...dailyWeatherAtNoon.map(item => item.main.temp));
 
+    const hour = currentTime.getHours();
+    const minutes = currentTime.getMinutes();
+    const seconds = currentTime.getSeconds();
+
     return (
-        <div className='flex flex-col bg-blue-50 items-center justify-center min-h-screen'>
+        <div className='flex flex-col bg-blue-200 items-center justify-center min-h-screen'>
             <div className='w-full max-w-xl bg-gradient-to-b from-custom-dark to-custom-light rounded-2xl shadow-lg overflow-hidden m-4'>
                 <div className='flex flex-row justify-between p-6'>
                     <div>
+                        <p className='text-white'>{`${hour}:${minutes}:${seconds}`}</p>
                         <p className='text-white text-xl font-semibold'>Ankara</p>
                         <p className='text-white text-5xl font-bold'>{currentWeatherData.main.temp.toFixed(0)}°</p>
                     </div>
@@ -56,7 +70,7 @@ const Weather = () => {
                     })}
                 </div>
             </div>
-            <footer className='fixed bottom-0 left-0 w-full bg-blue-50 text-center py-2'>
+            <footer className='fixed bottom-0 left-0 w-full bg-blue-200  text-center py-2'>
                 <p className='text-gray-600'>Made by Görkem Paşaoğlu</p>
             </footer>
         </div>
